@@ -15,8 +15,14 @@ from util import getAudioDevice
 # Order: Blue, Green, Red
 DOT_COLOR = (0, 0, 255)
 CONNECTION_COLOR = (0, 255, 0)
+LINE_COLOR = (255, 0, 255)
+TEXT_COLOR = (255, 255, 0)
 
 EXIT_KEY = 'q'
+
+# Don't change
+THUMB_TIP = 4
+INDEX_TIP = 8
 
 def main():
     mpDrawing = mp.solutions.drawing_utils
@@ -62,10 +68,12 @@ def main():
                             }
                         )
 
-            cv2.imshow('Hand tracking', image)
-
             if (l != []):
-                    setVolume(volume, volMin, volMax, l)
+                vol = setVolume(l, volume, volMin, volMax)
+                drawLine(image, l)
+                addText(image, l, vol)
+
+            cv2.imshow('Hand tracking', image)
 
             # Exit if user pressed 'q'
             if (cv2.waitKey(10) & 0xFF == ord(EXIT_KEY)):
@@ -73,13 +81,28 @@ def main():
 
     print("--- End of Program ---")
 
-def setVolume(volume, volMin, volMax, landmarks):
-    
-    THUMB_TIP = 4
-    INDEX_TIP = 8
-
+def addText(image, landmarks, vol):
     x1, y1 = landmarks[THUMB_TIP]['cx'], landmarks[THUMB_TIP]['cy']
     x2, y2 = landmarks[INDEX_TIP]['cx'], landmarks[INDEX_TIP]['cy']
+
+    midPoint = (int((x1 + x2) / 2), int((y1 + y2) / 2))
+    cv2.putText(image, f'Volume: {vol:.2f}', midPoint, cv2.FONT_HERSHEY_SIMPLEX, 1, TEXT_COLOR, 1, cv2.LINE_AA)
+
+def drawLine(image, landmarks):
+    """
+        Draw line between thumb's tip and index finger's tip
+    """
+    x1, y1 = landmarks[THUMB_TIP]['cx'], landmarks[THUMB_TIP]['cy']
+    x2, y2 = landmarks[INDEX_TIP]['cx'], landmarks[INDEX_TIP]['cy']
+
+    # cv2.line(image, start_point, end_point, color, thickness)
+    cv2.line(image, (x1, y1), (x2, y2), LINE_COLOR, 3)
+
+def setVolume(landmarks, volume, volMin, volMax):
+    
+    x1, y1 = landmarks[THUMB_TIP]['cx'], landmarks[THUMB_TIP]['cy']
+    x2, y2 = landmarks[INDEX_TIP]['cx'], landmarks[INDEX_TIP]['cy']
+
 
     distance = hypot(x2 - x1, y2 - y1)
     v = np.interp(
@@ -101,6 +124,8 @@ def setVolume(volume, volMin, volMax, landmarks):
     except:
         # pass
         print('[WARNING] Boundary reached! Please adjust distance between the hand and camera!')
+    
+    return v
 
 def detectHands(hands, frame):
     # Recoloring the frame read from webcam
