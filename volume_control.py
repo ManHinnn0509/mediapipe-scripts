@@ -4,7 +4,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
-from util import getAudioDevice
+from util import formatLandmarks, getAudioDevice
 
 """
     Volume control by hand (Tip of thumb + index finger)
@@ -43,35 +43,15 @@ def main():
             
             image, results = detectHands(hands, frame)
 
-            l = []
+            lm = []
             landmarks = results.multi_hand_landmarks
             if (landmarks):
+                lm = formatLandmarks(landmarks, image, mpDrawing, mpHands, DOT_COLOR, CONNECTION_COLOR)
 
-                for handLandmark in landmarks:
-
-                    for id, mark in enumerate(handLandmark.landmark):
-                        # Draws the detection on the image
-                        mpDrawing.draw_landmarks(
-                            image, handLandmark, mpHands.HAND_CONNECTIONS,
-                            mpDrawing.DrawingSpec(color=DOT_COLOR, thickness=2, circle_radius=4),
-                            mpDrawing.DrawingSpec(color=CONNECTION_COLOR, thickness=2, circle_radius=2)
-                        )
-
-                        height, width, ignored = image.shape
-                        cx, cy = int(mark.x * width), int(mark.y * height)
-
-                        l.append(
-                            {
-                                'id': id,
-                                'cx': cx,
-                                'cy': cy
-                            }
-                        )
-
-            if (l != []):
-                vol = setVolume(l, volume, volMin, volMax)
-                drawLine(image, l)
-                addText(image, l, vol)
+            if (lm != []):
+                vol = setVolume(lm, volume, volMin, volMax)
+                drawLine(image, lm)
+                addText(image, lm, vol)
 
             cv2.imshow('Hand tracking', image)
 
@@ -82,6 +62,9 @@ def main():
     print("--- End of Program ---")
 
 def addText(image, landmarks, vol):
+    """
+        Add text that shows the volume near the middle of the thumb's tip and index finger's tip
+    """
     x1, y1 = landmarks[THUMB_TIP]['cx'], landmarks[THUMB_TIP]['cy']
     x2, y2 = landmarks[INDEX_TIP]['cx'], landmarks[INDEX_TIP]['cy']
 
@@ -99,6 +82,9 @@ def drawLine(image, landmarks):
     cv2.line(image, (x1, y1), (x2, y2), LINE_COLOR, 3)
 
 def setVolume(landmarks, volume, volMin, volMax):
+    """
+        Set system volume and return volume from calculation
+    """
     
     x1, y1 = landmarks[THUMB_TIP]['cx'], landmarks[THUMB_TIP]['cy']
     x2, y2 = landmarks[INDEX_TIP]['cx'], landmarks[INDEX_TIP]['cy']
