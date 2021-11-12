@@ -4,7 +4,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
-from util import formatLandmarks, getAudioDevice
+from util import *
 
 """
     Volume control by hand (Tip of thumb + index finger)
@@ -50,8 +50,10 @@ def main():
 
             if (lm != []):
                 vol = setVolume(lm, volume, volMin, volMax)
-                drawLine(image, lm)
-                addText(image, lm, vol)
+                drawLine(image, lm, THUMB_TIP, INDEX_TIP, LINE_COLOR)
+                
+                text = f'Volume: {vol:.2f}'
+                addText(image, lm, text, THUMB_TIP, INDEX_TIP, TEXT_COLOR)
 
             cv2.imshow('Hand tracking', image)
 
@@ -60,26 +62,6 @@ def main():
                 break
 
     print("--- End of Program ---")
-
-def addText(image, landmarks, vol):
-    """
-        Add text that shows the volume near the middle of the thumb's tip and index finger's tip
-    """
-    x1, y1 = landmarks[THUMB_TIP]['cx'], landmarks[THUMB_TIP]['cy']
-    x2, y2 = landmarks[INDEX_TIP]['cx'], landmarks[INDEX_TIP]['cy']
-
-    midPoint = (int((x1 + x2) / 2), int((y1 + y2) / 2))
-    cv2.putText(image, f'Volume: {vol:.2f}', midPoint, cv2.FONT_HERSHEY_SIMPLEX, 1, TEXT_COLOR, 1, cv2.LINE_AA)
-
-def drawLine(image, landmarks):
-    """
-        Draw line between thumb's tip and index finger's tip
-    """
-    x1, y1 = landmarks[THUMB_TIP]['cx'], landmarks[THUMB_TIP]['cy']
-    x2, y2 = landmarks[INDEX_TIP]['cx'], landmarks[INDEX_TIP]['cy']
-
-    # cv2.line(image, start_point, end_point, color, thickness)
-    cv2.line(image, (x1, y1), (x2, y2), LINE_COLOR, 3)
 
 def setVolume(landmarks, volume, volMin, volMax):
     """
@@ -112,21 +94,6 @@ def setVolume(landmarks, volume, volMin, volMax):
         print('[WARNING] Boundary reached! Please adjust distance between the hand and camera!')
     
     return v
-
-def detectHands(hands, frame):
-    # Recoloring the frame read from webcam
-    # Default 'image' get from cv2 is in BGR
-    # Convert it to RGB is for mediapipe
-    image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-    image.flags.writeable = False
-    results = hands.process(image)
-    image.flags.writeable = True
-
-    # Change it back to BGR after the process
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-    return image, results
 
 if (__name__ == '__main__'):
     main()
