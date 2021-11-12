@@ -5,7 +5,7 @@ import mediapipe as mp
 import numpy as np
 import screen_brightness_control as sbc
 
-from util import *
+from util.utils import *
 
 """
     Control the brightness of the primary monitor via your fingers
@@ -67,11 +67,14 @@ def main():
                 print(f'Set brightness to: {b}')
                 sbc.set_brightness(b)
 
-            cv2.imshow('Hand tracking', image)
+            cv2.imshow('Primary monitor brightness control by hand', image)
 
             # Exit if user pressed 'q'
             if (cv2.waitKey(10) & 0xFF == ord(EXIT_KEY)):
                 break
+            
+    cap.release()
+    cv2.destroyAllWindows()
 
     print('--- End of Program ---')
 

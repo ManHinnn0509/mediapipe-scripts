@@ -3,6 +3,10 @@ import mediapipe as mp
 
 from util import calcMidPoint, formatLandmarks, detectHands, drawLine, addText
 
+"""
+    Try to calculate the coords. of the palm and draw it out
+"""
+
 # Order: Blue, Green, Red
 DOT_COLOR = (0, 0, 255)
 CONNECTION_COLOR = (0, 255, 0)

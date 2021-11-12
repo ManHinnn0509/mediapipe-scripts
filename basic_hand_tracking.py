@@ -32,12 +32,16 @@ def main():
                         mpDrawing.DrawingSpec(color=DOT_COLOR, thickness=2, circle_radius=4),
                         mpDrawing.DrawingSpec(color=CONNECTION_COLOR, thickness=2, circle_radius=2)
                     )
+                    print(type(hand))
 
             cv2.imshow('Hand tracking', image)
 
             # Exit if user pressed 'q'
             if (cv2.waitKey(10) & 0xFF == ord(EXIT_KEY)):
                 break
+    
+    cap.release()
+    cv2.destroyAllWindows()
 
     print("--- End of Program ---")
 
