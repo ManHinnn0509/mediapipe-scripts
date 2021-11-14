@@ -4,10 +4,16 @@ import mediapipe as mp
 EXIT_KEY = 'q'
 
 def main():
+    res_720 = (1280, 720)
+
     mpFaceDetector = mp.solutions.face_detection
     mpDraw = mp.solutions.drawing_utils
 
     cap = cv2.VideoCapture(0)
+    # Scale it to 720p
+    cap.set(3, res_720[0])
+    cap.set(4, res_720[1])
+    
     with mpFaceDetector.FaceDetection(min_detection_confidence=0.7) as faceDetection:
         
         while (cap.isOpened()):
