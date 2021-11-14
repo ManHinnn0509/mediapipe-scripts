@@ -23,6 +23,7 @@ CONNECTION_COLOR = (0, 255, 0)
 
 THUMB_TIP = 4
 INEDX_MCP = 5
+INDEX_PIP = 6
 INDEX_TIP = 8
 MIDDLE_PIP = 10
 MIDDLE_TIP = 12
@@ -44,15 +45,10 @@ def main():
 
     down = False
 
-    # For scrolling
-    prevY = -1
-    currY = -1
-
     with mpHands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5, max_num_hands=1) as hands:
 
         while (cap.isOpened()):
             success, frame = cap.read()
-            prevY = currY
 
             # Flip the frame horizontally
             image = cv2.flip(frame, 1)
@@ -82,11 +78,12 @@ def main():
                 x0, y0 = scaleCoords(x0, y0, res_1080)
 
                 # Another joint / node to perform click / hold / drag etc...
-                x2, y2 = lm[MIDDLE_PIP]['x'], lm[MIDDLE_PIP]['y']
+                x2, y2 = lm[INDEX_PIP]['x'], lm[INDEX_PIP]['y']
                 x2, y2 = scaleCoords(x2, y2, res_1080)
 
                 # Click
                 dist = hypot(x2 - x0, y2 - y0)
+                # print(dist)
 
                 # Perform action with index finger's tip's coords
                 if (dist <= CLICK_MAX_DIST):
@@ -95,19 +92,6 @@ def main():
                 else:
                     # down = False
                     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, x1, y1, 0, 0)
-
-                # Part that performs scrolling
-                # Will be working on this soon
-                # Cause I have to determine which node to use for scrolling
-                # + Avoid collision from click / drag performing
-                """
-                dist = hypot(x1 - x0, y1 - y0)
-                if (dist <= SCROLL_MAX_DIST):
-                    if (currY < prevY):
-                        print('SCROLL UP')
-                    else:
-                        print('SCROLL DOWN')
-                """
                 
                 # print(dist)
 
