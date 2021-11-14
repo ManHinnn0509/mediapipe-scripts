@@ -1,6 +1,7 @@
-mediapipe==0.8.9
-comtypes==1.1.10
-screen_brightness_control==0.11.3
 opencv_python==4.5.1.48
-numpy==1.21.3
 pycaw==20181226
+numpy==1.21.3
+mediapipe==0.8.9
+pywin32==300
+screen_brightness_control==0.11.3
+comtypes==1.1.10
