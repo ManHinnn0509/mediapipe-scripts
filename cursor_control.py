@@ -15,6 +15,7 @@ from util.utils import detectHands, formatLandmarks
 # IMPORTANT
 # Distance to determine perform click / drag or not
 CLICK_MAX_DIST = 40
+SCROLL_MAX_DIST = 30
 
 # Order: Blue, Green, Red
 DOT_COLOR = (0, 0, 255)
@@ -43,10 +44,15 @@ def main():
 
     down = False
 
+    # For scrolling
+    prevY = -1
+    currY = -1
+
     with mpHands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5, max_num_hands=1) as hands:
 
         while (cap.isOpened()):
             success, frame = cap.read()
+            prevY = currY
 
             # Flip the frame horizontally
             image = cv2.flip(frame, 1)
@@ -61,6 +67,8 @@ def main():
                 # Index, FOR MOVING THE CURSOR
                 x1, y1 = lm[INDEX_TIP]['x'], lm[INDEX_TIP]['y']
                 x1, y1 = scaleCoords(x1, y1, res_1080)
+
+                currY = y1
 
                 # The coords has to be int
                 try:
@@ -87,6 +95,19 @@ def main():
                 else:
                     # down = False
                     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, x1, y1, 0, 0)
+
+                # Part that performs scrolling
+                # Will be working on this soon
+                # Cause I have to determine which node to use for scrolling
+                # + Avoid collision from click / drag performing
+                """
+                dist = hypot(x1 - x0, y1 - y0)
+                if (dist <= SCROLL_MAX_DIST):
+                    if (currY < prevY):
+                        print('SCROLL UP')
+                    else:
+                        print('SCROLL DOWN')
+                """
                 
                 # print(dist)
 
