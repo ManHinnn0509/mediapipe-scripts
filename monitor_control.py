@@ -11,6 +11,7 @@ from util.utils import detectHands, formatLandmarks
     - Use index finger's tip to move the cursor
     - Perform click / drag by touch the middle part of your middle finger with your thumb's tip
 """
+
 # IMPORTANT
 # Distance to determine perform click / drag or not
 CLICK_MAX_DIST = 40
@@ -79,6 +80,7 @@ def main():
                 # Click
                 dist = hypot(x2 - x0, y2 - y0)
 
+                # Perform action with index finger's tip's coords
                 if (dist <= CLICK_MAX_DIST):
                     # down = True
                     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, x1, y1, 0, 0)
@@ -88,7 +90,7 @@ def main():
                 
                 # print(dist)
 
-            cv2.imshow('Hand tracking', image)
+            cv2.imshow('Monitor control via fingers', image)
 
             # Exit if user pressed 'q'
             if (cv2.waitKey(10) & 0xFF == ord(EXIT_KEY)):
