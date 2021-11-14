@@ -1,6 +1,8 @@
 import cv2
 import mediapipe as mp
 
+from util.utils import detectHands
+
 # Order: Blue, Green, Red
 DOT_COLOR = (0, 0, 255)
 CONNECTION_COLOR = (0, 255, 0)
@@ -44,22 +46,6 @@ def main():
     cv2.destroyAllWindows()
 
     print("--- End of Program ---")
-
-def detectHands(hands, frame):
-    # Recoloring the frame read from webcam
-    # Default 'image' get from cv2 is in BGR
-    # Convert it to RGB is for mediapipe
-    image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-    image.flags.writeable = False
-    results = hands.process(image)
-    image.flags.writeable = True
-
-    # Change it back to BGR after the process
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-    return image, results
-
 
 if (__name__ == '__main__'):
     main()

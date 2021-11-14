@@ -84,6 +84,8 @@ def formatLandmarks(landmarks, image, mpDrawing, mpHands, dotColor, connectionCo
                     'id': id,
                     'cx': cx,
                     'cy': cy,
+                    'x': mark.x,
+                    'y': mark.y
                 }
             )
     
