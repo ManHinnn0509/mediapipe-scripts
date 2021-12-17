@@ -56,6 +56,7 @@ def main():
             if (cv2.waitKey(10) & 0xFF == ord(EXIT_KEY)):
                 break
 
+# There seems to be having a little issue when getting target area
 def blurPart(img, newBox):
     # --- Blur
     topLeft = (newBox[0], newBox[3])
