@@ -38,7 +38,7 @@ def main():
                     
                     # Scale the box with current cap's width and height
                     newBox = int(box.xmin * width), int(box.ymin * height), int(box.width * width), int(box.height * height)
-                    
+
                     # Blur before drawing the box
                     image = blurPart(image, newBox)
 
@@ -51,23 +51,23 @@ def main():
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2
                     )
 
-            cv2.imshow('Face detection', image)
+            cv2.imshow('Face blurring', image)
 
             if (cv2.waitKey(10) & 0xFF == ord(EXIT_KEY)):
                 break
 
 # There seems to be having a little issue when getting target area
 def blurPart(img, newBox):
-    # --- Blur
-    topLeft = (newBox[0], newBox[3])
-    rightBottom = (newBox[2], newBox[1])
+
+    topLeft = (newBox[0], newBox[1])
+    rightBottom = (newBox[2], newBox[3])
 
     x, y = topLeft[0], topLeft[1]
     w, h = rightBottom[0], rightBottom[1]
     
     # Cut out the target part
     ROI = img[y:y + h, x:x + w]
-    blur = cv2.GaussianBlur(ROI, (0, 0), sigmaX=10, sigmaY=10)
+    blur = cv2.GaussianBlur(ROI, (0, 0), sigmaX=20, sigmaY=20)
     
     # Put it back in
     img[y:y + h, x:x + w] = blur
