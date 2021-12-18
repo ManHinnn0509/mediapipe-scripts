@@ -5,7 +5,7 @@ import mediapipe as mp
 import numpy as np
 import screen_brightness_control as sbc
 
-from util.utils import detectHands, formatLandmarks, drawLine, addText
+from hand_detection.utils import detectHands, formatLandmarks, drawLine, addText
 
 """
     Control the brightness of the primary monitor via your fingers

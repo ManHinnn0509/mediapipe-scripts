@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 
-from util.utils import detectHands
+from hand_detection.utils import detectHands
 
 # Order: Blue, Green, Red
 DOT_COLOR = (0, 0, 255)

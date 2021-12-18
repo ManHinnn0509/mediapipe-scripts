@@ -1,6 +1,8 @@
 import cv2
 import mediapipe as mp
 
+from face_detection.utils import blurFaces
+
 """
     Blur faces with GaussianBlur()
 
@@ -46,7 +48,7 @@ def main():
                     newBox = int(box.xmin * width), int(box.ymin * height), int(box.width * width), int(box.height * height)
 
                     # Blur before drawing the box
-                    image = blurPart(image, newBox)
+                    image = blurFaces(image, newBox)
 
                     # Draw the scaled box with cv2.rectangle
                     cv2.rectangle(image, newBox, (0, 255, 0), 1)
@@ -61,24 +63,6 @@ def main():
 
             if (cv2.waitKey(10) & 0xFF == ord(EXIT_KEY)):
                 break
-
-# There seems to be having a little issue when getting target area
-def blurPart(img, newBox):
-
-    topLeft = (newBox[0], newBox[1])
-    rightBottom = (newBox[2], newBox[3])
-
-    x, y = topLeft[0], topLeft[1]
-    w, h = rightBottom[0], rightBottom[1]
-    
-    # Cut out the target part
-    ROI = img[y:y + h, x:x + w]
-    blur = cv2.GaussianBlur(ROI, (0, 0), sigmaX=20, sigmaY=20)
-    
-    # Put it back in
-    img[y:y + h, x:x + w] = blur
-
-    return img
 
 if (__name__ == '__main__'):
     main()
