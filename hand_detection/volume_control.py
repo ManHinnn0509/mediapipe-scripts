@@ -4,7 +4,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
-from hand_detection.utils import *
+from hand_utils import getAudioDevice, detectHands, formatLandmarks, drawLine, addText
 
 """
     Volume control by hand (Tip of thumb + index finger)

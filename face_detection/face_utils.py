@@ -1,6 +1,6 @@
 import cv2
 
-def blurFaces(img, newBox):
+def blurFaces(img, newBox, sigmaX=10, sigmaY=10):
 
     topLeft = (newBox[0], newBox[1])
     rightBottom = (newBox[2], newBox[3])
@@ -10,14 +10,33 @@ def blurFaces(img, newBox):
     
     # Cut out the target part
     ROI = img[y:y + h, x:x + w]
-    blur = cv2.GaussianBlur(ROI, (0, 0), sigmaX=20, sigmaY=20)
+    blur = cv2.GaussianBlur(ROI, (0, 0), sigmaX=sigmaX, sigmaY=sigmaY)
     
     # Put it back in
     img[y:y + h, x:x + w] = blur
 
     return img
 
-def pixelateFaces(img, newBox):
+def blurExceptFace(img, newBox, sigmaX=10, sigmaY=10):
+
+    topLeft = (newBox[0], newBox[1])
+    rightBottom = (newBox[2], newBox[3])
+
+    x, y = topLeft[0], topLeft[1]
+    w, h = rightBottom[0], rightBottom[1]
+
+    # Save down the face area
+    face = img[y : y + h, x : x + w]
+
+    # Blur the whole image
+    img = cv2.GaussianBlur(img, (0, 0), sigmaX=sigmaX, sigmaY=sigmaY)
+
+    # Replace the face part with un-blurred version
+    img[y : y + h, x : x + w] = face
+
+    return img
+
+def pixelateFaces(img, newBox, pixelateSide=8):
 
     topLeft = (newBox[0], newBox[1])
     rightBottom = (newBox[2], newBox[3])
@@ -30,10 +49,9 @@ def pixelateFaces(img, newBox):
     roiH, roiW, _ = ROI.shape
 
     # Pixelate it by resizing it to NxN
-    PIXELATE_SIDE = 8
     temp = cv2.resize(
         ROI,
-        (PIXELATE_SIDE, PIXELATE_SIDE),
+        (pixelateSide, pixelateSide),
         interpolation=cv2.INTER_LINEAR
     )
 

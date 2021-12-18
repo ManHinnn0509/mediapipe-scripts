@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 
-from util import calcMidPoint, formatLandmarks, detectHands, drawLine, addText
+from hand_utils import calcMidPoint, formatLandmarks, detectHands, drawLine, addText
 
 """
     Try to calculate the coords. of the palm and draw it out

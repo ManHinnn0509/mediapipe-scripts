@@ -1,7 +1,11 @@
 import cv2
 import mediapipe as mp
 
-from face_utils import pixelateFaces
+from face_utils import blurExceptFace
+
+"""
+    Blur everything except face(s)
+"""
 
 EXIT_KEY = 'q'
 
@@ -41,8 +45,7 @@ def main():
                     # Scale the box with current cap's width and height
                     newBox = int(box.xmin * width), int(box.ymin * height), int(box.width * width), int(box.height * height)
 
-                    # Pixelate faces
-                    image = pixelateFaces(image, newBox)
+                    image = blurExceptFace(image, newBox)
 
                     # Draw the scaled box with cv2.rectangle
                     cv2.rectangle(image, newBox, (0, 255, 0), 1)
@@ -52,8 +55,12 @@ def main():
                         (newBox[0], newBox[1] - 20),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2
                     )
+            
+            # Blur the image even if no face(s) were found / detected
+            else:
+                image = cv2.GaussianBlur(image, (0, 0), 10, 10)
 
-            cv2.imshow('Pixelate faces', image)
+            cv2.imshow('Face detection', image)
 
             if (cv2.waitKey(10) & 0xFF == ord(EXIT_KEY)):
                 break

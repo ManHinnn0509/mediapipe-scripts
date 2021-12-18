@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 
-from hand_detection.utils import detectHands
+from hand_utils import detectHands
 
 # Order: Blue, Green, Red
 DOT_COLOR = (0, 0, 255)
@@ -34,7 +34,8 @@ def main():
                         mpDrawing.DrawingSpec(color=DOT_COLOR, thickness=2, circle_radius=4),
                         mpDrawing.DrawingSpec(color=CONNECTION_COLOR, thickness=2, circle_radius=2)
                     )
-                    print(type(hand))
+                    
+                    # print(type(hand))
 
             cv2.imshow('Hand tracking', image)
 

@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 
-from face_detection.utils import blurFaces
+from face_utils import blurFaces
 
 """
     Blur faces with GaussianBlur()
@@ -48,7 +48,7 @@ def main():
                     newBox = int(box.xmin * width), int(box.ymin * height), int(box.width * width), int(box.height * height)
 
                     # Blur before drawing the box
-                    image = blurFaces(image, newBox)
+                    image = blurFaces(image, newBox, 20, 20)
 
                     # Draw the scaled box with cv2.rectangle
                     cv2.rectangle(image, newBox, (0, 255, 0), 1)

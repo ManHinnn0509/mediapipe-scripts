@@ -4,7 +4,7 @@ import win32api, win32con
 
 from math import hypot
 
-from hand_detection.utils import detectHands, formatLandmarks
+from hand_utils import detectHands, formatLandmarks
 
 """
     14/11/2021
