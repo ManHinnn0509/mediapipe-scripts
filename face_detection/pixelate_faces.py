@@ -1,12 +1,6 @@
 import cv2
 import mediapipe as mp
 
-"""
-    Blur faces with GaussianBlur()
-
-    Edit the sigmaX / sigmaY in blurPart() if necessary
-"""
-
 EXIT_KEY = 'q'
 
 def main():
@@ -45,8 +39,8 @@ def main():
                     # Scale the box with current cap's width and height
                     newBox = int(box.xmin * width), int(box.ymin * height), int(box.width * width), int(box.height * height)
 
-                    # Blur before drawing the box
-                    image = blurPart(image, newBox)
+                    # Pixelate faces
+                    image = pixelateFaces(image, newBox)
 
                     # Draw the scaled box with cv2.rectangle
                     cv2.rectangle(image, newBox, (0, 255, 0), 1)
@@ -57,13 +51,12 @@ def main():
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2
                     )
 
-            cv2.imshow('Face blurring with GaussianBlur()', image)
+            cv2.imshow('Pixelate faces', image)
 
             if (cv2.waitKey(10) & 0xFF == ord(EXIT_KEY)):
                 break
 
-# There seems to be having a little issue when getting target area
-def blurPart(img, newBox):
+def pixelateFaces(img, newBox):
 
     topLeft = (newBox[0], newBox[1])
     rightBottom = (newBox[2], newBox[3])
@@ -73,10 +66,41 @@ def blurPart(img, newBox):
     
     # Cut out the target part
     ROI = img[y:y + h, x:x + w]
-    blur = cv2.GaussianBlur(ROI, (0, 0), sigmaX=20, sigmaY=20)
+    roiH, roiW, _ = ROI.shape
+
+    # Pixelate it by resizing it to NxN
+    PIXELATE_SIDE = 8
+    temp = cv2.resize(
+        ROI,
+        (PIXELATE_SIDE, PIXELATE_SIDE),
+        interpolation=cv2.INTER_LINEAR
+    )
+
+    # Resize it back to the original size
+    ROI = cv2.resize(temp, (roiH, roiW), interpolation=cv2.INTER_NEAREST)
+
+    # Put it back into the original image
+    try:
+        img[y:y + h, x:x + w] = ROI
     
-    # Put it back in
-    img[y:y + h, x:x + w] = blur
+    except ValueError:
+        pass
+
+    # Why a try except & pass?
+    # -
+    # The following error will be thrown when the face is not INSIDE the image
+    # E.g In the image's border
+    """
+    Traceback (most recent call last):
+    File "c:/Users/User/Documents/GitHub Repositories/ManHinnn0509/mediapipe-scripts/face_detection/pixelate_faces.py", line 84, in <module>
+        main()
+    File "c:/Users/User/Documents/GitHub Repositories/ManHinnn0509/mediapipe-scripts/face_detection/pixelate_faces.py", line 43, in main
+        image = pixelateFaces(image, newBox)
+    File "c:/Users/User/Documents/GitHub Repositories/ManHinnn0509/mediapipe-scripts/face_detection/pixelate_faces.py", line 79, in pixelateFaces
+        img[y:y + h, x:x + w] = ROI
+    ValueError: could not broadcast input array from shape (183,182,3) into shape (182,183,3)
+    [ WARN:0] global D:\a\opencv-python\opencv-python\opencv\modules\videoio\src\cap_msmf.cpp (438) `anonymous-namespace'::SourceReaderCB::~SourceReaderCB terminating async callback
+    """
 
     return img
 

@@ -1,6 +1,12 @@
 import cv2
 import mediapipe as mp
 
+"""
+    JUST FOR FUN
+
+    Displays your social credit scores 🥶🥵🥶🥵🥶🥵
+"""
+
 EXIT_KEY = 'q'
 
 def main():

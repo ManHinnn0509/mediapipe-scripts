@@ -1,6 +1,10 @@
 import cv2
 import mediapipe as mp
 
+"""
+    Basic face detection script
+"""
+
 EXIT_KEY = 'q'
 
 def main():
